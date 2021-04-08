@@ -12,7 +12,7 @@ namespace Automation
 {
     public abstract class TestBase
     {
-        public IWebDriver Driver;
+        public WebDriverListener Driver;
         public TestBase()
         {
 
