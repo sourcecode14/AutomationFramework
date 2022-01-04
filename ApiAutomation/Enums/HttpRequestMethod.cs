@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Automation.ApiAutomation.Enums
+namespace Automation.Framework.ApiAutomation.Enums
 {
     public enum HttpRequestMethod
     {

@@ -1,11 +1,11 @@
-﻿using Automation.ApiAutomation.Enums;
+﻿using Automation.Framework.ApiAutomation.Enums;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Automation.ApiAutomation
+namespace Automation.Framework.ApiAutomation
 {
     public class ApiHelper
     {
@@ -51,14 +51,49 @@ namespace Automation.ApiAutomation
             return SendRequest(Method.GET, endpointWithQueryparamIfAny);
         }
 
-        public IRestResponse SendRequest(Method method,string endpoint,JObject payLoad=null,string contentType= "application/json" ) 
+        public IRestResponse SendPostRequest(string endpoint, string queryparam="", Object payLoad = null, string contentType = "application/json") 
+        {
+            string endpointWithQueryparamIfAny = "";
+            if (String.IsNullOrWhiteSpace(queryparam))
+            {
+                endpointWithQueryparamIfAny = endpoint;
+            }
+            else
+            {
+                endpointWithQueryparamIfAny = $"{endpoint}?{queryparam}";
+
+            }
+            return SendRequest(Method.POST, endpointWithQueryparamIfAny, payLoad, contentType);
+        }
+
+        public IRestResponse SendDeleteRequest(string endpoint, string queryparam="")
+        {
+            string endpointWithQueryparamIfAny = "";
+            if (String.IsNullOrWhiteSpace(queryparam))
+            {
+                endpointWithQueryparamIfAny = endpoint;
+            }
+            else
+            {
+                endpointWithQueryparamIfAny = $"{endpoint}?{queryparam}";
+
+            }
+            return SendRequest(Method.DELETE, endpointWithQueryparamIfAny);
+        }
+
+        public IRestResponse SendRequest(Method method,string endpoint,Object payLoad=null,string contentType= "application/json" ) 
         {
             RestClient restClient = new RestClient(ApiHost);
             RestRequest restRequest = new RestRequest(endpoint, method);
-            restRequest.AddHeaders(Headers);
+            if (Headers != null) 
+            {
+                restRequest.AddHeaders(Headers);
+            }
+            
             AddCookiesToRequest(restRequest);
             if (method != Method.GET) 
             {
+                
                 restRequest.AddParameter(contentType, payLoad, ParameterType.RequestBody);
             }
             

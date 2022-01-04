@@ -3,8 +3,9 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Web;
 
-namespace Automation.ApiAutomation
+namespace Automation.Framework.ApiAutomation
 {
     public class ApiUtils
     {
@@ -24,15 +25,33 @@ namespace Automation.ApiAutomation
 
         public T ConvertResponseToDataModel<T>(string responseBody) 
         {
-            try
-            {
-                return JsonConvert.DeserializeObject<T>(responseBody);
-            }
+            if (!string.IsNullOrWhiteSpace(responseBody))
+                try
+                {
+                    return JsonConvert.DeserializeObject<T>(responseBody);
+                }
 
-            catch (Exception e) 
+                catch (Exception e)
+                {
+                    throw new Exception($"Failed to convert response string to Data Model Object {nameof(T)}\n {e.Message}\n{e.StackTrace}");
+                }
+            else 
             {
-                throw new Exception($"Failed to convert response string to Data Model Object");
+                throw new Exception($"Respone receieved was empty , hence response body cannot be converted to Data model {nameof(T)}");
             }
+        }
+
+        public string GenerateUUID()
+        {
+            Guid guid = Guid.NewGuid();
+            return guid.ToString();
+        }
+
+        public string GetParamterValueFromURL(string url , string paramtername) 
+        {
+            Uri theUri = new Uri(url);
+            string paramterValue = HttpUtility.ParseQueryString(theUri.Query).Get(paramtername);
+            return paramterValue;
         }
     }
 }
